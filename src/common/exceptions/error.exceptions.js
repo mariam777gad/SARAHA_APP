@@ -27,7 +27,14 @@ export const UnauthorizedExceptions = (
     return ApplicationExceptions({ message, options: { cause: { status: 401, issues } } })
 }
 
-export const forbiddenExceptions = (
+export const BadExceptions = (
+    message = 'bad request exception',
+    issues = {}
+) => {
+    return ApplicationExceptions({ message, options: { cause: { status: 400, issues } } })
+}
+
+export const ForbiddenExceptions = (
     message = 'Forbidden',
     issues = {}
 ) => {

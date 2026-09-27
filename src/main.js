@@ -4,13 +4,15 @@ import { globalErrorHandler } from "./middleware/index.js";
 import { bootstrapDB } from "./DB/connection.db.js";
 import { PORT } from "./config.js";
 import { UserController } from "./modules/user/index.js";
+import cors from 'cors'
 
 const app = express();
 
 bootstrapDB(app, PORT)
-
+app.use(cors())
 
 app.use(express.json());
+
 
 app.all("/", (req, res) => {
     return res.status(200).json({ "message": "welcome to my API" });

@@ -59,7 +59,7 @@ export const findByIdAndUpdate = async ({ model, id = {}, update = {}, options =
     return await model.findByIdAndUpdate(
         id,
         { ...update, $inc: { __v: 1 } },
-        options
+        { ...options, returnDocument: 'after', runValidators: true }
     )
 }
 
