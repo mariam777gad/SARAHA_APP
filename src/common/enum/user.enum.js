@@ -12,3 +12,8 @@ export const ProviderEnum = {
     SYSTEM: 0,
     GOOGLE: 1
 }
+
+export const LanguageEnum = {
+    AR: 0,
+    EN: 1
+}

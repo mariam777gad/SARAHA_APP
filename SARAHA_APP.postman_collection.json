@@ -14,10 +14,15 @@
           "name": "create account",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "0"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"userName\": \"mariam mahmoud\",\r\n    \"email\": \"mariam0@gmail.com\",\r\n    \"password\": \"1234\",\r\n    \"confirmPassword\": \"123445\",\r\n    \"phone\": \"+201029651324\",\r\n    \"DOB\": \"2026-09-11\",\r\n    \"gender\": 1,\r\n    \"role\": 0,\r\n    \"provider\": 0\r\n}",
+              "raw": "{\r\n    \"userName\": \"mariaaa gad\",\r\n    \"email\": \"mariam5@gmail.com\",\r\n    \"password\": \"Mariam78@@\",\r\n    \"confirmPassword\": \"Mariam78@@\",\r\n    \"phone\": \"+201029651324\",\r\n    \"DOB\": \"2000-01-01\",\r\n    \"gender\": 1,\r\n    \"role\": 0,\r\n    \"provider\": 0\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -25,13 +30,19 @@
               }
             },
             "url": {
-              "raw": "{{BASE_URL}}/auth/signup",
+              "raw": "{{BASE_URL}}/auth/signup?lang=en",
               "host": [
                 "{{BASE_URL}}"
               ],
               "path": [
                 "auth",
                 "signup"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
               ]
             }
           },
@@ -39,12 +50,23 @@
         },
         {
           "name": "login account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let response = pm.response.json();\r\npm.environment.set(\"BEARER_ACCESS_TOKEN\", response.data.accessToken);\r\npm.environment.set(\"BEARER_REFRESH_TOKEN\", response.data.refreshToken);\r\nconsole.log(\"™ Tokens saved to environment variables: ACCESS_TOKEN & REFRESH_TOKEN\");"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"mariam8@gmail.com\",\r\n    \"password\": \"1234\"\r\n}\r\n",
+              "raw": "{\r\n    \"email\": \"mariam5@gmail.com\",\r\n    \"password\": \"Mariam78@@\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -52,13 +74,19 @@
               }
             },
             "url": {
-              "raw": "{{BASE_URL}}/auth/signin",
+              "raw": "{{BASE_URL}}/auth/signin?lang=ar",
               "host": [
                 "{{BASE_URL}}"
               ],
               "path": [
                 "auth",
                 "signin"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "ar"
+                }
               ]
             }
           },
@@ -72,13 +100,18 @@
         {
           "name": "profile",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "{{bearer_token_09jn}}"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{BASE_URL}}/user/",
               "host": [
@@ -95,13 +128,18 @@
         {
           "name": "update user",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "{{bearer_token_0z2x}}"
-              }
-            ],
+            "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\r\n    \"gender\": 1,\r\n    \"firstName\":\"mariaaggg\"\r\n} ",
@@ -125,14 +163,30 @@
         },
         {
           "name": "rotate token",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "{{bearer_token_02vf}}"
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let response = pm.response.json();\r\npm.environment.set(\"BEARER_ACCESS_TOKEN\", response.data.accessToken);\r\npm.environment.set(\"BEARER_REFRESH_TOKEN\", response.data.refreshToken);\r\nconsole.log(\"™ Tokens saved to environment variables: ACCESS_TOKEN & REFRESH_TOKEN\");"
+                ]
               }
-            ],
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_REFRESH_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
             "url": {
               "raw": "localhost:3000/user/routate-token",
               "host": [
@@ -142,6 +196,43 @@
               "path": [
                 "user",
                 "routate-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"action\":0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/user/logout",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "user",
+                "logout"
               ]
             }
           },

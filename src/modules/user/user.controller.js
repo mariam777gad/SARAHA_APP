@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { profile, routateToken, updateUserInfo } from "./user.service.js";
+import { logOut, profile, routateToken, updateUserInfo } from "./user.service.js";
 import { successResponse } from "../../common/utils/success.response.js";
 import { autharization, authentication } from "../../middleware/index.js";
 import { RoleEnum,  TokenTypeEnum } from "../../common/enum/index.js";
@@ -20,6 +20,12 @@ router.post("/routate-token", authentication(TokenTypeEnum.REFRESH), async (req,
     const result = await routateToken(req.payload, req.user, `${req.protocol}://${req.get('host')}`)
     return successResponse({ res, message: 'User Token Rotated Successfully ', data: result })
 })
+
+router.post("/logout", authentication(), async (req, res) => {
+    const result = await logOut(req.payload, req.user ,req.body)
+    return successResponse({ res, message: 'User Loged Out Successfully ', data: result })
+})
+
 
 
 export default router;

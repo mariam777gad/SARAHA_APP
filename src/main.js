@@ -8,11 +8,10 @@ import cors from 'cors'
 
 const app = express();
 
-bootstrapDB(app, PORT)
+await bootstrapDB(app, PORT)
+
 app.use(cors())
-
 app.use(express.json());
-
 
 app.all("/", (req, res) => {
     return res.status(200).json({ "message": "welcome to my API" });
