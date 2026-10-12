@@ -51,5 +51,6 @@ export const GeneralValidationFields = {
     role: zod.enum(RoleEnum),
     provider: zod.enum(ProviderEnum),
     DOB: zod.iso.date(),
+    otp: (lang) => zod.string().regex(/^\d{6}$/, { error: 'Invalid Code' }),
     matchedFields
 }

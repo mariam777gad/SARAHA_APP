@@ -40,3 +40,10 @@ export const ForbiddenExceptions = (
 ) => {
     return ApplicationExceptions({ message, options: { cause: { status: 403, issues } } })
 }
+
+export const TooManyRequestExceptions = (
+    message = 'Too Many Request Exceptions',
+    issues = {}
+) => {
+    return ApplicationExceptions({ message, options: { cause: { status: 429, issues } } })
+}

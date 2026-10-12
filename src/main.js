@@ -12,6 +12,7 @@ await bootstrapDB(app, PORT)
 
 app.use(cors())
 app.use(express.json());
+app.use('/assets',express.static("./assets"))
 
 app.all("/", (req, res) => {
     return res.status(200).json({ "message": "welcome to my API" });
@@ -26,4 +27,6 @@ app.all("{/*dummy}", (req, res) => {
 })
 
 app.use(globalErrorHandler);
+
+
 

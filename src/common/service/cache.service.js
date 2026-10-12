@@ -51,7 +51,7 @@ export const Incr = async ({ key } = {}) => {
     return client.incr(key)
 }
 
-export const IncrBy = async ({ key, incrby } = {}) => {
+export const IncrBy = async ({ key, incrby=1 } = {}) => {
     return client.incr(key, incrby)
 }
 

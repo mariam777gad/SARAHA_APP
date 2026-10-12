@@ -2,7 +2,9 @@ import { Router } from "express";
 import { logOut, profile, routateToken, updateUserInfo } from "./user.service.js";
 import { successResponse } from "../../common/utils/success.response.js";
 import { autharization, authentication } from "../../middleware/index.js";
-import { RoleEnum,  TokenTypeEnum } from "../../common/enum/index.js";
+import { RoleEnum, TokenTypeEnum } from "../../common/enum/index.js";
+import { fileValidation, loclFileUpload, } from "../../common/utils/index.js";
+import { uploadMiddleware } from "../../middleware/multer.middleware.js";
 
 const router = Router();
 
@@ -22,9 +24,23 @@ router.post("/routate-token", authentication(TokenTypeEnum.REFRESH), async (req,
 })
 
 router.post("/logout", authentication(), async (req, res) => {
-    const result = await logOut(req.payload, req.user ,req.body)
+    const result = await logOut(req.payload, req.user, req.body)
     return successResponse({ res, message: 'User Loged Out Successfully ', data: result })
 })
+
+router.patch("/profile-image",
+    authentication(),
+    uploadMiddleware({
+        isRequired: true,
+        multerMiddelware: loclFileUpload({ maxFileSize: 5 }).single('attachment'),
+        customPath: "local",
+        validation: fileValidation.image
+    })
+    , async (req, res) => {
+        req.user.image = req.file.finalPath
+        await req.user.save()
+        return successResponse({ res, message: 'User Image Added Successfully ', data: { user: req.user } })
+    })
 
 
 

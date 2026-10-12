@@ -21,3 +21,12 @@ export const REFRESH_USER_TOKEN_SEGNATURE = process.env.REFRESH_USER_TOKEN_SEGNA
 export const REFRESH_TOKEN_EXPIRES_IN = parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN) ?? 31536000
 
 export const WEB_CLIENT_IDS = process.env.WEB_CLIENT_IDS
+
+export const APP_PASSWORD = process.env.APP_PASSWORD
+export const APP_EMAIL = process.env.APP_EMAIL
+export const APP_NAME = process.env.APP_NAME
+
+
+export const FACEBOOK = process.env.FACEBOOK
+export const TWITTER = process.env.TWITTER     
+export const INSTAGRAM = process.env.INSTAGRAM

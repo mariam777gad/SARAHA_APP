@@ -13,6 +13,7 @@ export const login = (lang) => {
         //query: zod.strictObject({ language: zod.enum(['ar', 'en']).default('en'), })
     })
 }
+
 export const signUpSchema = (lang) => {
     return zod.object({
         body: loginSchema(lang).safeExtend({
@@ -23,7 +24,7 @@ export const signUpSchema = (lang) => {
             role: GeneralValidationFields.role,
             provider: GeneralValidationFields.provider,
             DOB: GeneralValidationFields.DOB,
-        }).superRefine((data, ctx ,lang) => {
+        }).superRefine((data, ctx, lang) => {
             GeneralValidationFields.matchedFields({ original: 'password', copy: 'confirmPassword', data, ctx, lang })
 
             if (!data.userName?.includes(" ")) {
@@ -33,6 +34,36 @@ export const signUpSchema = (lang) => {
                     message: 'UserName must contain spaces'
                 });
             }
+        })
+    })
+}
+
+export const confirmEmail = (lang) => {
+    return zod.object({
+        body: zod.strictObject({
+            email: GeneralValidationFields.email(lang),
+            otp: GeneralValidationFields.otp(lang)
+        })
+    })
+}
+
+export const reSendConfirmEmail = (lang) => {
+    return zod.object({
+        body: zod.strictObject({
+            email: GeneralValidationFields.email(lang),
+        })
+    })
+}
+
+export const reSetForgetPassword = (lang) => {
+    return zod.object({
+        body: zod.strictObject({
+            email: GeneralValidationFields.email(lang),
+            otp: GeneralValidationFields.otp(lang),
+            password: GeneralValidationFields.password(lang),
+            confirmPassword: GeneralValidationFields.confirmPassword(lang),
+        }).superRefine((data, ctx, lang) => {
+            GeneralValidationFields.matchedFields({ original: 'password', copy: 'confirmPassword', data, ctx, lang })
         })
     })
 } 
