@@ -10,6 +10,18 @@ export const UserEmailTrialsKey = ({ email, subject }) => {
     return `${UserEmailKey({ email, subject })}::Trials`
 }
 
+export const loginBanKey = ({ email }) => {
+    return `User::${email}::Login::Ban`
+};
+
+export const loginTrialsKey = ({ email }) => {
+    return `User::${email}::Login::Trials`
+};
+
+export const confirmLoginKey = ({ email }) => {
+    return `otp:${email}:LOGIN_2SV`
+};
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {

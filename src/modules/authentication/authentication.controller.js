@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { signup, signin, signUpWithGmail, confirmEmail, reSendConfirmEmail, requestForgetPassword, verifyForgetPassword, reSetForgetPassword } from "./authentication.service.js";
+import { signup, signin, signUpWithGmail, confirmEmail, reSendConfirmEmail, requestForgetPassword, verifyForgetPassword, reSetForgetPassword, enableTwoStepVerification, verifyAndEnableTwoStepVerification, signinWithProtection, confirmLoginWith2SV } from "./authentication.service.js";
 import { successResponse } from "../../common/utils/index.js";
 import * as validator from './authentiction.validation.js'
 import { validation } from "../../middleware/validation.middleware.js";
-
+import { authentication } from '../../middleware/index.js'
 const router = Router();
 
 router.post("/signup", validation(validator.signUpSchema), async (req, res) => {
@@ -45,6 +45,26 @@ router.post("/signin", validation(validator.login), async (req, res) => {
         const result = await signin(req.validation.body, `${req.protocol}://${req.host}`)
         return successResponse({ res, message: 'login successfully', data: result })
 })
+
+router.post("/signin-secure", validation(validator.login), async (req, res) => {
+        const result = await signinWithProtection(req.validation.body, `${req.protocol}://${req.host}`);
+        return successResponse({ res, message: "Login processed", data: result, status: 200 });
+});
+
+router.patch("/enable-2sv", authentication(), async (req, res) => {
+        const result = await enableTwoStepVerification(req.user._id);
+        return successResponse({ res, status: 200, data: result });
+});
+
+router.patch("/verify-enable-2sv", authentication(), async (req, res) => {
+        const result = await verifyAndEnableTwoStepVerification(req.user._id, req.body.otp);
+        return successResponse({ res, data: result, status: 200 });
+});
+
+router.post("/login-confirmation", validation(validator.confirmEmail), async (req, res) => {
+        const tokens = await confirmLoginWith2SV(req.validation.body, `${req.protocol}://${req.host}`);
+        return successResponse({ res, message: "Login confirmed successfully", data: tokens, status: 200 });
+});
 
 export default router;
 

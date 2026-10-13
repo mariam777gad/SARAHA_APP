@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
     confirmPassword: Date,
     phone: String,
     image: String,
-    changeCredentialTime:Date,
+    changeCredentialTime: Date,
     role: {
         type: Number,
         enum: Object.values(RoleEnum),
@@ -45,6 +45,10 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         enum: Object.values(ProviderEnum),
         default: ProviderEnum.SYSTEM
+    },
+    isTwoFactorEnabled: {
+        type: Boolean,
+        default: false
     }
 }, {
     collection: 'SARAHA_APP_USERS',

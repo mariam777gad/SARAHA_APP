@@ -9,7 +9,7 @@ import { emailEvent } from '../../common/utils/email/email.event.js';
 import { EmailSubjectEnum } from "../../common/enum/email.enum.js";
 import { createOtp } from '../../common/utils/email/otp.js';
 import { Del, Expire, Get, IncrBy, Keys, Set, Ttl } from "../../common/service/cache.service.js";
-import { UserEmailKey, UserEmailTrialsKey } from "../../common/utils/email/send.email.js";
+import { confirmLoginKey, loginBanKey, loginTrialsKey, UserEmailKey, UserEmailTrialsKey } from "../../common/utils/email/send.email.js";
 
 const client = new OAuth2Client();
 async function verifyGoogleAccount(idToken) {
@@ -55,8 +55,10 @@ export const signUpWithGmail = async ({ idToken }, issuer) => {
     }
 }
 
-const sendEmailOtp = async ({ email, subject, expiresIn = 120, maxTrials = 3, blockInSeconds = 300, title }) => {
-    const existOtpTTL = await Ttl({ key: UserEmailKey({ email, subject }) })
+const sendEmailOtp = async ({ customKey, email, subject, expiresIn = 120, maxTrials = 3, blockInSeconds = 300, title }) => {
+    const key = customKey ?? UserEmailKey({ email, subject });
+
+    const existOtpTTL = await Ttl({ key })
     if (existOtpTTL > 0) throw ConflictExceptions(`Please wait for ${existOtpTTL} seconds before requesting a new OTP.`)
 
     const oldTrials = await Get({ key: UserEmailTrialsKey({ email, subject }) }) ?? 0
@@ -66,7 +68,7 @@ const sendEmailOtp = async ({ email, subject, expiresIn = 120, maxTrials = 3, bl
 
     const code = createOtp()
     await Set({
-        key: UserEmailKey({ email, subject }),
+        key,
         value: await hash(code.toString()),
         ttl: expiresIn
     })
@@ -78,7 +80,7 @@ const sendEmailOtp = async ({ email, subject, expiresIn = 120, maxTrials = 3, bl
 
     emailEvent.emit('sendEmail', {
         recipients: { to: email },
-        subject: EmailSubjectEnum.CONFIRM_EMAIL,
+        subject,
         data: { code, title: title ?? subject }
     })
 
@@ -160,7 +162,7 @@ export const verifyForgetPassword = async ({ email, otp }) => {
     return account
 }
 
-export const reSetForgetPassword = async ({ email, otp,password }) => {
+export const reSetForgetPassword = async ({ email, otp, password }) => {
 
     const account = await verifyForgetPassword({ email, otp })
     account.password = await hash(password)
@@ -200,3 +202,97 @@ export const signin = async ({ email, password }, issuer) => {
     return await createTokenCredentials({ user: account, issuer })
 }
 
+export const signinWithProtection = async ({ email, password }, issuer) => {
+    const isBaned = await Ttl({ key: loginBanKey({ email }) });
+    if (isBaned > 0) {
+        throw TooManyRequestExceptions(`Account is temporarily blocked due to multiple failed login attempts. Try again after ${Math.ceil(isBaned / 60)} minutes.`);
+    }
+
+    const account = await findOne({
+        model: UserModel,
+        filter: { email, provider: ProviderEnum.SYSTEM, confirmEmail: { $exists: true } },
+        options: {},
+    });
+    if (!account) {
+        throw NotFoundExceptions('Invalid Email Or Password');
+    }
+
+    const match = await compare(password, account.password);
+    if (!match) {
+        await handleFailedLoginPassword(email);
+        throw NotFoundExceptions('Invalid Email Or Password');
+    }
+
+    await Del({ key: loginTrialsKey({ email }) });
+
+    if (account.isTwoFactorEnabled) {
+        await sendEmailOtp({
+            email,
+            subject: EmailSubjectEnum.LOGIN_2SV,
+            title: "Login Verification Code",
+            customKey: confirmLoginKey({ email })
+        });
+        return { message: "OTP sent to your email for 2-step verification", requireTwoFactor: true };
+    }
+
+    account.phone = await decryption(account.phone);
+    return { tokens: await createTokenCredentials({ user: account, issuer }), requireTwoFactor: false };
+};
+
+async function handleFailedLoginPassword(email) {
+    const trials = await IncrBy({ key: loginTrialsKey({ email }) });
+    if (trials === 1) {
+        await Expire({ key: loginTrialsKey({ email }), ttl: 300 });
+    }
+    if (trials >= 5) {
+        await Set({ key: loginBanKey({ email }), value: "BANNED", ttl: 300 });
+        await Del({ key: loginTrialsKey({ email }) });
+    }
+}
+
+export const enableTwoStepVerification = async (userId) => {
+    const account = await findOne({ model: UserModel, filter: { _id: userId } });
+    if (!account) throw NotFoundExceptions('Account not found');
+
+    const code = createOtp();
+    await Set({
+        key: UserEmailKey({ email: account.email, subject: "ENABLE_2SV" }),
+        value: await hash(code.toString()),
+        ttl: 120
+    });
+
+    emailEvent.emit('sendEmail', {
+        recipients: { to: account.email },
+        subject: EmailSubjectEnum.LOGIN_2SV,
+        data: { code, title: "Enable 2-Step Verification" }
+    });
+    return { message: "OTP sent to verify and enable 2-step verification" };
+};
+
+export const verifyAndEnableTwoStepVerification = async (userId, otp) => {
+    const account = await findOne({ model: UserModel, filter: { _id: userId } });
+    if (!account) throw NotFoundExceptions('Account not found');
+
+    const hashOtp = await Get({ key: UserEmailKey({ email: account.email, subject: "ENABLE_2SV" }) });
+    if (!hashOtp || !await compare(otp, hashOtp)) throw BadExceptions('Invalid OTP');
+
+    account.isTwoFactorEnabled = true;
+    await account.save();
+
+    await Del({ key: UserEmailKey({ email: account.email, subject: "ENABLE_2SV" }) });
+    return { message: "2-Step verification enabled successfully" };
+};
+
+export const confirmLoginWith2SV = async ({ email, otp }, issuer) => {
+    const account = await findOne({ model: UserModel, filter: { email } });
+    if (!account) throw NotFoundExceptions('Account not found')
+
+    const hashOtp = await Get({ key: confirmLoginKey({ email }) });
+
+    if (!hashOtp || !await compare(otp, hashOtp)) throw BadExceptions('Invalid OTP');
+
+    await Del({ key: confirmLoginKey({ email }) });
+
+    account.phone = await decryption(account.phone);
+    return await createTokenCredentials({ user: account, issuer });
+};

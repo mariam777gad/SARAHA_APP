@@ -24,6 +24,7 @@ export const signUpSchema = (lang) => {
             role: GeneralValidationFields.role,
             provider: GeneralValidationFields.provider,
             DOB: GeneralValidationFields.DOB,
+            isTwoFactorEnabled:GeneralValidationFields.isTwoFactorEnabled
         }).superRefine((data, ctx, lang) => {
             GeneralValidationFields.matchedFields({ original: 'password', copy: 'confirmPassword', data, ctx, lang })
 
@@ -66,4 +67,5 @@ export const reSetForgetPassword = (lang) => {
             GeneralValidationFields.matchedFields({ original: 'password', copy: 'confirmPassword', data, ctx, lang })
         })
     })
-} 
+}
+
