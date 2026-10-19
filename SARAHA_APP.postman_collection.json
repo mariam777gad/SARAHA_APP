@@ -1,0 +1,1089 @@
+{
+  "info": {
+    "_postman_id": "73a9a860-77fc-43ed-9af1-cec22406110a",
+    "name": "SARAHA_APP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50827779",
+    "_collection_link": "https://go.postman.co/collection/50827779-73a9a860-77fc-43ed-9af1-cec22406110a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "create account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "0"
+              },
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userName\": \"mariaaa gad\",\r\n    \"email\":  \"hdydqcwiclrunenday@jbsze.net\",\r\n    \"password\": \"Mariam78@@1\",\r\n    \"confirmPassword\": \"Mariam78@@1\",\r\n    \"phone\": \"+201029651324\",\r\n    \"DOB\": \"2000-01-01\",\r\n    \"gender\": 1,\r\n    \"role\": 0,\r\n    \"provider\": 0,\r\n    \"isTwoFactorEnabled\":false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/signup?lang=en",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let response = pm.response.json();\r\npm.environment.set(\"BEARER_ACCESS_TOKEN\", response.data.accessToken);\r\npm.environment.set(\"BEARER_REFRESH_TOKEN\", response.data.refreshToken);\r\nconsole.log(\"™ Tokens saved to environment variables: ACCESS_TOKEN & REFRESH_TOKEN\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              },
+              {
+                "key": "x-forwarded-for",
+                "value": "50.45.210.10",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":   \"hdydqcwiclrunenday@jbsze.net\",\r\n    \"password\": \"Mariam78@@1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/signin?lang=ar",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "signin"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "ar"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "confirm email",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"hdydqcwiclrunenday@jbsze.net\",\r\n    \"otp\": \"440993\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/confirm_email",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "confirm_email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "resend confirm email",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":  \"hdydqcwiclrunenday@jbsze.net\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/resend-confirm_email",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "resend-confirm_email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request enble 2SV",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/auth/enable-2sv",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "enable-2sv"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify 2SV",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"otp\": \"589155\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/verify-enable-2sv",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "verify-enable-2sv"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "confirm login with 2SV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"hdydqcwiclrunenday@jbsze.net\",\r\n    \"otp\": \"520729\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login-confirmation",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login-confirmation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login with protection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":  \"hdydqcwiclrunenday@jbsze.net\",\r\n    \"password\": \"Mariam78@@1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/signin-secure",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "signin-secure"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://ipapi.co/50.45.210.10/json/",
+              "protocol": "https",
+              "host": [
+                "ipapi",
+                "co"
+              ],
+              "path": [
+                "50.45.210.10",
+                "json",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/user/",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "user",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update user",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"gender\": 1,\r\n    \"firstName\": \"mariam \"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/user",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "rotate token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let response = pm.response.json();\r\npm.environment.set(\"BEARER_ACCESS_TOKEN\", response.data.accessToken);\r\npm.environment.set(\"BEARER_REFRESH_TOKEN\", response.data.refreshToken);\r\nconsole.log(\"™ Tokens saved to environment variables: ACCESS_TOKEN & REFRESH_TOKEN\");"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_REFRESH_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "localhost:3000/user/routate-token",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "user",
+                "routate-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"action\":0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/user/logout",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "user",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "profile image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "41.45.210.10"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "attachment",
+                  "type": "file",
+                  "src": [
+                    "/C:/Users/free bytes/OneDrive/Pictures/Screenshots/لقطة شاشة 2026-08-16 031402.png"
+                  ]
+                },
+                {
+                  "key": "cover",
+                  "type": "file",
+                  "src": [
+                    "/C:/Users/free bytes/OneDrive/Pictures/Screenshots/Screenshot (9).png"
+                  ],
+                  "disabled": true
+                },
+                {
+                  "key": "",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/user/profile-image",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "user",
+                "profile-image"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "forget password",
+      "item": [
+        {
+          "name": "request forget password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"mariamgad7777@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/request-forget-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "request-forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify forget password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"mariamgad7777@gmail.com\",\r\n    \"otp\":\"987165\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/verify-forget-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "verify-forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset forget password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"mariamgad7777@gmail.com\",\r\n    \"otp\": \"987165\",\r\n    \"password\": \"Mariam78@@1\",\r\n    \"confirmPassword\": \"Mariam78@@1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/reset-forget-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "reset-forget-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "item": [
+        {
+          "name": "create message",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "attachments",
+                  "type": "file",
+                  "src": [
+                    "/C:/Users/free bytes/OneDrive/Pictures/Screenshots/Screenshot (6).png",
+                    "/C:/Users/free bytes/OneDrive/Pictures/Screenshots/Screenshot (7).png"
+                  ]
+                },
+                {
+                  "key": "receiverId",
+                  "value": "6ad49718b1b5eb7afa9ff0b9",
+                  "type": "text"
+                },
+                {
+                  "key": "content",
+                  "value": "new one",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/message",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create message by account",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "attachments",
+                  "type": "file",
+                  "src": [
+                    "/C:/Users/free bytes/OneDrive/Pictures/Screenshots/Screenshot (3).png"
+                  ]
+                },
+                {
+                  "key": "content",
+                  "value": "slllllll",
+                  "type": "text"
+                },
+                {
+                  "key": "receiverId",
+                  "value": "6ad4f32a86498d75badc5d38",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/message",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "all message",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message?type=1&page=1&limit=6",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "1"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete message",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message/{{messageId}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "{{messageId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "message by id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message/{{messageId}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "{{messageId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "request sender Identity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message/{{messageId}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "{{messageId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "my requests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message/requests/my-requests",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "requests",
+                "my-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "handel request idntity",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"rejected\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/message/requests/{{requestId}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "requests",
+                "{{requestId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "all conversation ms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message/conversations/{{conversationId}}/messages",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "conversations",
+                "{{conversationId}}",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sent conversation ms",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{BEARER_ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-forwarded-for",
+                "value": "41.45.210.10",
+                "description": "Eg"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/message/conversations/{{conversationId}}/messages",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "message",
+                "conversations",
+                "{{conversationId}}",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_15zg",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_04zr",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0rnm",
+      "secret": true
+    },
+    {
+      "key": "bearer_token_1dmg",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_084z",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_10up",
+      "secret": true
+    }
+  ]
+}

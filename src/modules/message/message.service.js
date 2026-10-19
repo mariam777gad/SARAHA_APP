@@ -21,7 +21,7 @@ export const createMessage = async ({ content, receiverId } = {}, files = [], us
     return message
 }
 
-export const getAllMessages = async ({ type, page, limit } = {}, user) => {
+export const getAllMessages = async ({ type, page, limit, search } = {}, user) => {
 
     let filter = {};
     if (type === '0') {
@@ -37,8 +37,11 @@ export const getAllMessages = async ({ type, page, limit } = {}, user) => {
         }
     }
 
-    const data = await messageRepository.paginate({ filter, page, limit, options: { sort: { createdAt: -1 } } })
+    if (search) {
+        filter.content = { $regex: search, $options: 'i' };
+    }
 
+    const data = await messageRepository.paginate({ filter, page, limit, options: { sort: { createdAt: -1 } } })
     return data
 }
 

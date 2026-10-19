@@ -27,7 +27,8 @@ export const allMessages = (lang) => {
         query: zod.strictObject({
             type: zod.enum(['0', '1']).optional(),
             page: zod.coerce.number().default(1),
-            limit: zod.coerce.number().default(5)
+            limit: zod.coerce.number().default(5),
+            search: zod.string().trim().optional()
         })
     })
 }

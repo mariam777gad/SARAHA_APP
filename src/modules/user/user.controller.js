@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { logOut, profile, routateToken, updateUserInfo } from "./user.service.js";
-import { autharization, authentication ,uploadMiddleware } from "../../middleware/index.js";
+import { autharization, authentication, hostMiddleware, uploadMiddleware } from "../../middleware/index.js";
 import { RoleEnum, TokenTypeEnum } from "../../common/enum/index.js";
-import { fileValidation, loclFileUpload,successResponse } from "../../common/utils/index.js";
+import { fileValidation, loclFileUpload, successResponse } from "../../common/utils/index.js";
 
 const router = Router({ caseSensitive: true, strict: true });
 
@@ -16,8 +16,8 @@ router.patch("/", authentication(), autharization(RoleEnum.ADMIN), async (req, r
     return successResponse({ res, message: 'User Data Updated Successfully ', data: result })
 })
 
-router.post("/routate-token", authentication(TokenTypeEnum.REFRESH), async (req, res) => {
-    const result = await routateToken(req.payload, req.user, `${req.protocol}://${req.get('host')}`)
+router.post("/routate-token", authentication(TokenTypeEnum.REFRESH), hostMiddleware, async (req, res) => {
+    const result = await routateToken(req.payload, req.user, req.domain)
     return successResponse({ res, message: 'User Token Rotated Successfully ', data: result })
 })
 

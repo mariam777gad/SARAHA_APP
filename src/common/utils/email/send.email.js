@@ -29,6 +29,7 @@ const transporter = nodemailer.createTransport({
         pass: APP_PASSWORD,
     },
 });
+
 export const sendEmail = async ({
     to,
     subject,

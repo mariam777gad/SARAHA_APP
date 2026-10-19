@@ -1,6 +1,6 @@
 import express from "express";
 import { authController, messageController } from "./modules/index.js";
-import { globalErrorHandler } from "./middleware/index.js";
+import { globalErrorHandler, hostMiddleware } from "./middleware/index.js";
 import { bootstrapDB } from "./DB/connection.db.js";
 import { ORIGIN, PORT } from "./config.js";
 import { UserController } from "./modules/user/index.js";
@@ -24,7 +24,7 @@ var corsOptions = {
     }
 }
 
-const limiter = generateLimiter({ limit: 5 })
+const limiter = generateLimiter({ limit: 100 })
 
 app.set("trust proxy", true)
 
@@ -34,7 +34,10 @@ app.use(
     helmet(),
     cors(),
     limiter,
-    express.json());
+    express.json()
+);
+
+app.use(hostMiddleware)
 
 app.use('/assets', express.static("./assets"))
 
